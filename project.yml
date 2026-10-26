@@ -35,6 +35,8 @@ targets:
       properties:
         CFBundleDisplayName: MaxGym
         UILaunchScreen: {}
+        UIFileSharingEnabled: true # sets folder visible in the Files app and Finder
+        LSSupportsOpeningDocumentsInPlace: true
 
   MaxGymWatch:
     type: application

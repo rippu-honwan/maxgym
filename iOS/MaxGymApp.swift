@@ -1,11 +1,12 @@
 import SwiftUI
-import MaxGymCore
 
 @main
 struct MaxGymApp: App {
+    @State private var receiver = SetReceiver()
+
     var body: some Scene {
         WindowGroup {
-            Text("MaxGym")
+            ContentView().environment(receiver)
         }
     }
 }
