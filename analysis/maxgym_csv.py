@@ -25,3 +25,9 @@ def load_set(path: str | Path) -> tuple[dict[str, str], pd.DataFrame]:
     if list(df.columns) != COLUMNS:
         raise ValueError(f"{path}: unexpected columns {list(df.columns)}")
     return meta, df
+
+
+def weight_kg(meta: dict[str, str]) -> float | None:
+    """Load in kg, or None for bodyweight (empty or missing `weight_kg`)."""
+    value = meta.get("weight_kg", "")
+    return float(value) if value else None

@@ -2,7 +2,7 @@ import SwiftUI
 import WatchKit
 import MaxGymCore
 
-/// Records one set: Start → do the set → Stop → enter the true rep count with the crown → Save.
+/// Records one set: Start → do the set → Stop → reps (crown) → weight (crown) → Save.
 /// The rep count is the label (ground truth), so Discard is there for when you are not sure.
 struct RecordSetView: View {
     let exercise: Exercise
@@ -11,16 +11,21 @@ struct RecordSetView: View {
     @Environment(WorkoutManager.self) private var workout
     @Environment(\.dismiss) private var dismiss
 
-    private enum Phase { case ready, recording, labeling }
+    private enum Phase { case ready, recording, reps, weight }
 
     @State private var phase = Phase.ready
     @State private var recorder = MotionRecorder()
     @State private var samples: [MotionSample] = []
     @State private var startDate = Date()
-    @State private var crownValue = 10.0 // the crown needs a floating-point binding
+    // The crown needs floating-point bindings; reps are rounded to Int.
+    @State private var repsValue = 10.0
+    @State private var weightValue = 0.0 // 0 = bodyweight
     @State private var errorText: String?
 
-    private var reps: Int { Int(crownValue.rounded()) }
+    private var reps: Int { Int(repsValue.rounded()) }
+    private var weightKg: Double? { weightValue > 0 ? weightValue : nil }
+    /// Last weight per exercise, so the next set starts at the same load.
+    private var weightKey: String { "lastWeightKg.\(exercise.id)" }
 
     var body: some View {
         VStack(spacing: 6) {
@@ -40,17 +45,19 @@ struct RecordSetView: View {
                 }
                 bigButton("Stop", icon: "stop.fill", color: .red, action: stop)
 
-            case .labeling:
-                Text("\(reps)")
-                    .font(.system(size: 64, weight: .bold, design: .rounded))
-                    .monospacedDigit()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .focusable()
-                    .digitalCrownRotation($crownValue, from: 1, through: 50, by: 1,
-                                          sensitivity: .low, isContinuous: false,
-                                          isHapticFeedbackEnabled: true)
+            case .reps:
+                crownNumber("\(reps)", unit: "reps", value: $repsValue, range: 1...50, step: 1)
                 HStack {
                     Button("Discard", role: .destructive, action: discard)
+                    Button("Next", action: showWeight).tint(.blue)
+                }
+
+            case .weight:
+                crownNumber(weightKg.map { $0.formatted() } ?? "BW",
+                            unit: weightKg == nil ? "bodyweight" : "kg",
+                            value: $weightValue, range: 0...300, step: 0.5)
+                HStack {
+                    Button("Back") { phase = .reps }
                     Button("Save", action: save).tint(.blue)
                 }
             }
@@ -74,6 +81,23 @@ struct RecordSetView: View {
         .tint(color)
     }
 
+    /// A big number set with the Digital Crown.
+    private func crownNumber(_ text: String, unit: String, value: Binding<Double>,
+                             range: ClosedRange<Double>, step: Double) -> some View {
+        VStack(spacing: 0) {
+            Text(text)
+                .font(.system(size: 56, weight: .bold, design: .rounded))
+                .monospacedDigit()
+                .minimumScaleFactor(0.5)
+                .lineLimit(1)
+            Text(unit).font(.footnote).foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .focusable()
+        .digitalCrownRotation(value, from: range.lowerBound, through: range.upperBound, by: step,
+                              sensitivity: .low, isContinuous: false, isHapticFeedbackEnabled: true)
+    }
+
     private func start() {
         workout.startIfNeeded()
         recorder.start()
@@ -86,7 +110,13 @@ struct RecordSetView: View {
     private func stop() {
         samples = recorder.stop()
         WKInterfaceDevice.current().play(.stop)
-        phase = .labeling
+        phase = .reps
+    }
+
+    private func showWeight() {
+        weightValue = UserDefaults.standard.double(forKey: weightKey) // 0 if never set
+        WKInterfaceDevice.current().play(.click)
+        phase = .weight
     }
 
     private func save() {
@@ -94,6 +124,7 @@ struct RecordSetView: View {
         let meta = SetMetadata(
             exercise: exercise,
             trueReps: reps,
+            weightKg: weightKg,
             sampleRateHz: MotionRecorder.sampleRateHz,
             recordedAt: startDate,
             wrist: device.wristLocation == .left ? .left : .right,
@@ -102,6 +133,7 @@ struct RecordSetView: View {
         do {
             let url = try SetStore.save(meta, samples: samples)
             SetSender.shared.send(url)
+            UserDefaults.standard.set(weightValue, forKey: weightKey)
             device.play(.success)
             onSaved()
             dismiss()

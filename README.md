@@ -62,6 +62,7 @@ Header lines (`# key=value`):
 | `format_version` | `1` | CSV format version |
 | `exercise` | `bicep_curl` | Exercise ID (`Exercise` raw value) |
 | `true_reps` | `10` | Label: reps counted by the user |
+| `weight_kg` | `12.5` or empty | Load in kg (0.5 kg steps). Empty = bodyweight |
 | `sample_rate_hz` | `50` | Requested sample rate |
 | `recorded_at` | `2026-10-26T06:15:00Z` | Set start, ISO 8601 UTC |
 | `wrist` | `left` / `right` | Wrist the watch is worn on |

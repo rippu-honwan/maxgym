@@ -3,7 +3,7 @@ import Testing
 import MaxGymCore
 
 private let meta = SetMetadata(
-    exercise: .bicepCurl, trueReps: 3, sampleRateHz: 50,
+    exercise: .bicepCurl, trueReps: 3, weightKg: 12.5, sampleRateHz: 50,
     recordedAt: Date(timeIntervalSince1970: 1_792_995_300), // 2026-10-26T06:15:00Z
     wrist: .left, crown: .right
 )
@@ -38,4 +38,10 @@ private let samples = [
     #expect(SetCSV.parseFileName("notes.txt") == nil)
     #expect(SetCSV.parseFileName("20261026-061500_squat.csv") == nil)
     #expect(SetCSV.parseFileName("20261026-061500_squat_xreps.csv") == nil)
+}
+
+@Test func bodyweightWritesEmptyWeight() {
+    var bodyweight = meta
+    bodyweight.weightKg = nil
+    #expect(SetCSV.encode(bodyweight, samples: []).contains("\n# weight_kg=\n"))
 }

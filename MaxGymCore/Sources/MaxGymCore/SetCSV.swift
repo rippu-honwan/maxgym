@@ -9,15 +9,18 @@ public struct SetMetadata: Sendable, Equatable {
     public var exercise: Exercise
     /// The label: rep count entered by the user after the set.
     public var trueReps: Int
+    /// Load in kg. nil = bodyweight (written as an empty value).
+    public var weightKg: Double?
     public var sampleRateHz: Int
     public var recordedAt: Date
     /// Which wrist the watch is worn on, and which side the crown faces. Both flip the sensor axes.
     public var wrist: Side
     public var crown: Side
 
-    public init(exercise: Exercise, trueReps: Int, sampleRateHz: Int, recordedAt: Date, wrist: Side, crown: Side) {
+    public init(exercise: Exercise, trueReps: Int, weightKg: Double?, sampleRateHz: Int, recordedAt: Date, wrist: Side, crown: Side) {
         self.exercise = exercise
         self.trueReps = trueReps
+        self.weightKg = weightKg
         self.sampleRateHz = sampleRateHz
         self.recordedAt = recordedAt
         self.wrist = wrist
@@ -35,6 +38,7 @@ public enum SetCSV {
             "# format_version=\(formatVersion)",
             "# exercise=\(meta.exercise.id)",
             "# true_reps=\(meta.trueReps)",
+            "# weight_kg=\(meta.weightKg.map { String(format: "%g", $0) } ?? "")",
             "# sample_rate_hz=\(meta.sampleRateHz)",
             "# recorded_at=\(meta.recordedAt.formatted(.iso8601))",
             "# wrist=\(meta.wrist.rawValue)",
