@@ -56,6 +56,7 @@ targets:
         WKBackgroundModes: [workout-processing] # keep recording with the wrist down
         NSHealthShareUsageDescription: Reads heart rate to store with your workouts.
         NSHealthUpdateUsageDescription: Saves strength training workouts to the Health app.
+        NSMotionUsageDescription: Records wrist motion for each set to train the rep counter.
     entitlements:
       path: Watch/MaxGymWatch.entitlements
       properties:
