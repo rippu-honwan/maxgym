@@ -53,3 +53,11 @@ private let samples = [
     assisted.weightKg = -47
     #expect(SetCSV.encode(assisted, samples: []).contains("\n# weight_kg=-47\n"))
 }
+
+/// Smith bar only: 0 is a real load, so it is written as 0, not empty.
+@Test func smithBarOnlyWritesZero() {
+    var smith = meta
+    smith.exercise = .smithRDL
+    smith.weightKg = 0
+    #expect(SetCSV.encode(smith, samples: []).contains("\n# weight_kg=0\n"))
+}

@@ -19,3 +19,10 @@ import MaxGymCore
         #expect(Set(day.exercises).count == day.exercises.count, "\(day.name)")
     }
 }
+
+@Test func zeroWeightIsBodyweightExceptSmith() {
+    #expect(Equipment.cable.weightKg(fromEntered: 0) == nil)
+    #expect(Equipment.assisted.weightKg(fromEntered: 0) == nil)
+    #expect(Equipment.smith.weightKg(fromEntered: 0) == 0)
+    #expect(Equipment.assisted.weightKg(fromEntered: -47) == -47)
+}

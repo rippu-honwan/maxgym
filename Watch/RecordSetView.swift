@@ -19,12 +19,12 @@ struct RecordSetView: View {
     @State private var startDate = Date()
     // The crown needs floating-point bindings; reps are rounded to Int.
     @State private var repsValue = 10.0
-    @State private var weightValue = 0.0 // 0 = bodyweight
+    @State private var weightValue = 0.0 // 0 = bodyweight (bar only on Smith)
     @State private var errorText: String?
 
     private var reps: Int { Int(repsValue.rounded()) }
-    /// nil = bodyweight. Negative = assistance (assisted exercises only).
-    private var weightKg: Double? { weightValue != 0 ? weightValue : nil }
+    /// nil = bodyweight. Negative = assistance. 0 on Smith = bar only.
+    private var weightKg: Double? { exercise.equipment.weightKg(fromEntered: weightValue) }
 
     /// Big number on the weight screen. Assistance is shown without the minus sign.
     private var weightText: String {

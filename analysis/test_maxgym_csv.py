@@ -37,3 +37,10 @@ def test_negative_weight_is_assistance(tmp_path):
     assisted.write_text(GOLDEN.read_text().replace("weight_kg=12.5", "weight_kg=-47"))
     meta, _ = load_set(assisted)
     assert weight_kg(meta) == -47.0
+
+
+def test_zero_weight_is_not_bodyweight(tmp_path):
+    bar_only = tmp_path / "bar_only.csv"
+    bar_only.write_text(GOLDEN.read_text().replace("weight_kg=12.5", "weight_kg=0"))
+    meta, _ = load_set(bar_only)
+    assert weight_kg(meta) == 0.0

@@ -88,12 +88,12 @@ The watch shows a short reminder under the value.
 | Equipment | Enter | Watch hint |
 |---|---|---|
 | Machine / cable | Stack value shown on the machine | `kg stack` |
-| Smith | Plates only, **without** the bar | `kg plates` |
+| Smith | Plates only, **without** the bar. `0` = bar only | `kg plates` |
 | Assisted | Assistance as a **negative** number, e.g. `-47` | `47` / `kg assist` |
-| Bodyweight (non-assisted) | `0` (shows `BW`) | `bodyweight` |
+| Bodyweight (all except Smith) | `0` (shows `BW`) | `bodyweight` |
 
 On assisted exercises the crown goes from -150 to 0; on all others from 0 to 300 (0.5 kg steps).
-`0` is always written as an empty `weight_kg`.
+`0` is written as an empty `weight_kg` (bodyweight), except on Smith where it is written as `0` (bar only).
 
 Then on the iPhone: MaxGym → **Share All** → AirDrop to the Mac → put the files in `data/`.
 `data/` is gitignored, so back it up somewhere else (e.g. iCloud Drive). The recordings cannot be redone.
@@ -122,7 +122,7 @@ Header lines (`# key=value`):
 | `format_version` | `1` | CSV format version |
 | `exercise` | `cable_bicep_curl` | Exercise ID (`Exercise` raw value) |
 | `true_reps` | `10` | Label: reps counted by the user |
-| `weight_kg` | `12.5`, `-47` or empty | Load in kg (0.5 kg steps), see note below. Negative = assistance. Empty = bodyweight |
+| `weight_kg` | `12.5`, `-47` or empty | Load in kg (0.5 kg steps), see note below. Negative = assistance. `0` = Smith bar only. Empty = bodyweight |
 | `sample_rate_hz` | `50` | Requested sample rate |
 | `recorded_at` | `2026-10-26T06:15:00Z` | Set start, ISO 8601 UTC |
 | `wrist` | `left` / `right` | Wrist the watch is worn on |

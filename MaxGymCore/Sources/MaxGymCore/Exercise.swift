@@ -90,3 +90,11 @@ public enum Equipment: Sendable {
     /// Weight = assistance as a negative number (e.g. -47).
     case assisted
 }
+
+extension Equipment {
+    /// Converts the value entered on the watch to `weight_kg`.
+    /// 0 means bodyweight (nil, written empty), except on Smith where 0 means bar only.
+    public func weightKg(fromEntered value: Double) -> Double? {
+        value == 0 && self != .smith ? nil : value
+    }
+}
