@@ -89,10 +89,10 @@ The watch shows a short reminder under the value.
 |---|---|---|
 | Machine / cable | Stack value shown on the machine | `kg stack` |
 | Smith | Plates only, **without** the bar. `0` = bar only | `kg plates` |
-| Assisted | Assistance as a **negative** number, e.g. `-47` | `47` / `kg assist` |
+| Assisted | Assist value shown on the machine, e.g. `47` (crown up = more assist). Written to CSV as `-47` | `47` / `kg assist` |
 | Bodyweight (all except Smith) | `0` (shows `BW`) | `bodyweight` |
 
-On assisted exercises the crown goes from -150 to 0; on all others from 0 to 300 (0.5 kg steps).
+The crown goes from 0 to 150 on assisted exercises and from 0 to 300 on all others (0.5 kg steps).
 `0` is written as an empty `weight_kg` (bodyweight), except on Smith where it is written as `0` (bar only).
 
 Then on the iPhone: MaxGym → **Share All** → AirDrop to the Mac → put the files in `data/`.

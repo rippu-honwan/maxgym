@@ -23,13 +23,12 @@ struct RecordSetView: View {
     @State private var errorText: String?
 
     private var reps: Int { Int(repsValue.rounded()) }
-    /// nil = bodyweight. Negative = assistance. 0 on Smith = bar only.
+    /// What goes into the CSV. nil = bodyweight. Negative = assistance. 0 on Smith = bar only.
     private var weightKg: Double? { exercise.equipment.weightKg(fromEntered: weightValue) }
 
-    /// Big number on the weight screen. Assistance is shown without the minus sign.
+    /// Big number on the weight screen: the value as entered (assistance is positive here).
     private var weightText: String {
-        guard let weightKg else { return "BW" }
-        return weightKg.magnitude.formatted()
+        weightKg == nil ? "BW" : weightValue.formatted()
     }
 
     /// Short reminder of the weight convention (README), shown under the value.
@@ -42,9 +41,9 @@ struct RecordSetView: View {
         }
     }
 
-    /// Assisted exercises store assistance as a negative weight; everything else is 0 or more.
+    /// The crown always edits a value of 0 or more; Core negates assistance when saving.
     private var weightRange: ClosedRange<Double> {
-        exercise.equipment == .assisted ? -150...0 : 0...300
+        exercise.equipment == .assisted ? 0...150 : 0...300
     }
 
     /// Last weight per exercise, so the next set starts at the same load.

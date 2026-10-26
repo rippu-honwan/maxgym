@@ -24,5 +24,6 @@ import MaxGymCore
     #expect(Equipment.cable.weightKg(fromEntered: 0) == nil)
     #expect(Equipment.assisted.weightKg(fromEntered: 0) == nil)
     #expect(Equipment.smith.weightKg(fromEntered: 0) == 0)
-    #expect(Equipment.assisted.weightKg(fromEntered: -47) == -47)
+    #expect(Equipment.assisted.weightKg(fromEntered: 47) == -47)
+    #expect(Equipment.cable.weightKg(fromEntered: 12.5) == 12.5)
 }

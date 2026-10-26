@@ -87,14 +87,19 @@ public enum Equipment: Sendable {
     case cable
     /// Weight = plates only, without the bar.
     case smith
-    /// Weight = assistance as a negative number (e.g. -47).
+    /// Entered as the assist value shown on the machine (47); stored as a negative weight (-47).
     case assisted
 }
 
 extension Equipment {
-    /// Converts the value entered on the watch to `weight_kg`.
-    /// 0 means bodyweight (nil, written empty), except on Smith where 0 means bar only.
+    /// Converts the value entered on the watch (always 0 or more) to `weight_kg`.
+    /// - 0 means bodyweight (nil, written empty), except on Smith where 0 means bar only.
+    /// - Assisted: the assist value is negated, so 47 kg of assistance becomes -47.
     public func weightKg(fromEntered value: Double) -> Double? {
-        value == 0 && self != .smith ? nil : value
+        switch self {
+        case .smith: value
+        case .assisted: value == 0 ? nil : -value
+        case .machine, .cable: value == 0 ? nil : value
+        }
     }
 }
