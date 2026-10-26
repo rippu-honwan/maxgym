@@ -24,6 +24,14 @@ struct RecordSetView: View {
 
     private var reps: Int { Int(repsValue.rounded()) }
     private var weightKg: Double? { weightValue > 0 ? weightValue : nil }
+    /// Short reminder of the weight convention (README), shown under the value.
+    private var weightUnit: String {
+        switch exercise.equipment {
+        case .dumbbell: "kg per hand"
+        case .barbell: "kg incl. bar"
+        case .machine: "kg stack"
+        }
+    }
     /// Last weight per exercise, so the next set starts at the same load.
     private var weightKey: String { "lastWeightKg.\(exercise.id)" }
 
@@ -54,7 +62,7 @@ struct RecordSetView: View {
 
             case .weight:
                 crownNumber(weightKg.map { $0.formatted() } ?? "BW",
-                            unit: weightKg == nil ? "bodyweight" : "kg",
+                            unit: weightKg == nil ? "bodyweight" : weightUnit,
                             value: $weightValue, range: 0...300, step: 0.5)
                 HStack {
                     Button("Back") { phase = .reps }

@@ -26,7 +26,7 @@ With a free Apple ID the apps expire after 7 days; run them from Xcode again.
 ## Collecting data
 
 Per set: pick the exercise → **Start** → do the set → **Stop** → turn the Digital Crown to the
-true rep count → **Save**.
+true rep count → **Next** → turn the crown to the weight → **Save**.
 
 Rules (break them and the data is useless):
 - Wear the watch on the same wrist, in the same position, every time.
@@ -34,6 +34,15 @@ Rules (break them and the data is useless):
 - Vary the rep count on purpose (e.g. 5, 8, 12, 15). Always doing 10 teaches a model to guess 10.
 - The rep count is the label. If you are not sure it is right, tap **Discard**.
 - Aim for at least 15 sets per exercise. The iPhone app shows the count in green when you get there.
+
+Weight convention (the watch shows a short reminder under the value):
+
+| Equipment | Enter | Exercises |
+|---|---|---|
+| Dumbbell / single-arm | Weight of **one** dumbbell (the hand wearing the watch) | Bicep Curl, Shoulder Press, Lateral Raise |
+| Barbell | Total, **including** the bar | Bench Press, Squat |
+| Machine / cable | Stack value shown on the machine | Tricep Pushdown |
+| Bodyweight | `0` on the watch (shows "BW"), written as an empty `weight_kg` | — |
 
 Then on the iPhone: MaxGym → **Share All** → AirDrop to the Mac → put the files in `data/`.
 `data/` is gitignored, so back it up somewhere else (e.g. iCloud Drive). The recordings cannot be redone.
@@ -62,7 +71,7 @@ Header lines (`# key=value`):
 | `format_version` | `1` | CSV format version |
 | `exercise` | `bicep_curl` | Exercise ID (`Exercise` raw value) |
 | `true_reps` | `10` | Label: reps counted by the user |
-| `weight_kg` | `12.5` or empty | Load in kg (0.5 kg steps). Empty = bodyweight |
+| `weight_kg` | `12.5` or empty | Load in kg (0.5 kg steps), see note below. Empty = bodyweight |
 | `sample_rate_hz` | `50` | Requested sample rate |
 | `recorded_at` | `2026-10-26T06:15:00Z` | Set start, ISO 8601 UTC |
 | `wrist` | `left` / `right` | Wrist the watch is worn on |
@@ -77,5 +86,8 @@ Columns (one row per CMDeviceMotion sample):
 | `grav_x,grav_y,grav_z` | `gravity` | g |
 | `rot_x,rot_y,rot_z` | `rotationRate` | rad/s |
 | `att_w,att_x,att_y,att_z` | `attitude.quaternion` | — |
+
+`weight_kg` follows the weight convention in [Collecting data](#collecting-data): one dumbbell
+for dumbbell exercises, total including the bar for barbells, the stack value for machines and cables.
 
 `t` has 4 decimals, all other values 5. Gaps in `t` show dropped samples.

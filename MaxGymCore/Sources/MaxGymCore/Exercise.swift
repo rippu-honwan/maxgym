@@ -20,4 +20,22 @@ public enum Exercise: String, CaseIterable, Identifiable, Sendable {
         case .squat: "Squat"
         }
     }
+
+    /// Decides how weight is entered (see README, weight convention).
+    public var equipment: Equipment {
+        switch self {
+        case .bicepCurl, .shoulderPress, .lateralRaise: .dumbbell
+        case .benchPress, .squat: .barbell
+        case .tricepPushdown: .machine
+        }
+    }
+}
+
+public enum Equipment: Sendable {
+    /// Weight of one dumbbell (the hand wearing the watch).
+    case dumbbell
+    /// Total weight including the bar.
+    case barbell
+    /// Stack value shown on the machine or cable.
+    case machine
 }
