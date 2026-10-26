@@ -53,3 +53,10 @@ targets:
         CFBundleDisplayName: MaxGym
         WKApplication: true
         WKCompanionAppBundleIdentifier: com.kenlip.MaxGym
+        WKBackgroundModes: [workout-processing] # keep recording with the wrist down
+        NSHealthShareUsageDescription: Reads heart rate to store with your workouts.
+        NSHealthUpdateUsageDescription: Saves strength training workouts to the Health app.
+    entitlements:
+      path: Watch/MaxGymWatch.entitlements
+      properties:
+        com.apple.developer.healthkit: true
