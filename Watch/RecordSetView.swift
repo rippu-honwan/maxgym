@@ -23,15 +23,30 @@ struct RecordSetView: View {
     @State private var errorText: String?
 
     private var reps: Int { Int(repsValue.rounded()) }
-    private var weightKg: Double? { weightValue > 0 ? weightValue : nil }
+    /// nil = bodyweight. Negative = assistance (assisted exercises only).
+    private var weightKg: Double? { weightValue != 0 ? weightValue : nil }
+
+    /// Big number on the weight screen. Assistance is shown without the minus sign.
+    private var weightText: String {
+        guard let weightKg else { return "BW" }
+        return weightKg.magnitude.formatted()
+    }
+
     /// Short reminder of the weight convention (README), shown under the value.
     private var weightUnit: String {
+        guard weightKg != nil else { return "bodyweight" }
         switch exercise.equipment {
-        case .dumbbell: "kg per hand"
-        case .barbell: "kg incl. bar"
-        case .machine: "kg stack"
+        case .machine, .cable: return "kg stack"
+        case .smith: return "kg plates"
+        case .assisted: return "kg assist"
         }
     }
+
+    /// Assisted exercises store assistance as a negative weight; everything else is 0 or more.
+    private var weightRange: ClosedRange<Double> {
+        exercise.equipment == .assisted ? -150...0 : 0...300
+    }
+
     /// Last weight per exercise, so the next set starts at the same load.
     private var weightKey: String { "lastWeightKg.\(exercise.id)" }
 
@@ -61,9 +76,8 @@ struct RecordSetView: View {
                 }
 
             case .weight:
-                crownNumber(weightKg.map { $0.formatted() } ?? "BW",
-                            unit: weightKg == nil ? "bodyweight" : weightUnit,
-                            value: $weightValue, range: 0...300, step: 0.5)
+                crownNumber(weightText, unit: weightUnit,
+                            value: $weightValue, range: weightRange, step: 0.5)
                 HStack {
                     Button("Back") { phase = .reps }
                     Button("Save", action: save).tint(.blue)
@@ -122,7 +136,8 @@ struct RecordSetView: View {
     }
 
     private func showWeight() {
-        weightValue = UserDefaults.standard.double(forKey: weightKey) // 0 if never set
+        let last = UserDefaults.standard.double(forKey: weightKey) // 0 if never set
+        weightValue = min(max(last, weightRange.lowerBound), weightRange.upperBound)
         WKInterfaceDevice.current().play(.click)
         phase = .weight
     }

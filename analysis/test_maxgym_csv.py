@@ -9,7 +9,7 @@ GOLDEN = Path(__file__).parent.parent / "fixtures" / "set_v1.csv"
 
 def test_loads_golden_file():
     meta, df = load_set(GOLDEN)
-    assert meta["exercise"] == "bicep_curl"
+    assert meta["exercise"] == "cable_bicep_curl"
     assert int(meta["true_reps"]) == 3
     assert weight_kg(meta) == 12.5
     assert meta["wrist"] == "left" and meta["crown"] == "right"
@@ -30,3 +30,10 @@ def test_empty_weight_is_bodyweight(tmp_path):
     bodyweight.write_text(GOLDEN.read_text().replace("weight_kg=12.5", "weight_kg="))
     meta, _ = load_set(bodyweight)
     assert weight_kg(meta) is None
+
+
+def test_negative_weight_is_assistance(tmp_path):
+    assisted = tmp_path / "assisted.csv"
+    assisted.write_text(GOLDEN.read_text().replace("weight_kg=12.5", "weight_kg=-47"))
+    meta, _ = load_set(assisted)
+    assert weight_kg(meta) == -47.0

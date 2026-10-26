@@ -3,7 +3,7 @@ import Testing
 import MaxGymCore
 
 private let meta = SetMetadata(
-    exercise: .bicepCurl, trueReps: 3, weightKg: 12.5, sampleRateHz: 50,
+    exercise: .cableBicepCurl, trueReps: 3, weightKg: 12.5, sampleRateHz: 50,
     recordedAt: Date(timeIntervalSince1970: 1_792_995_300), // 2026-10-26T06:15:00Z
     wrist: .left, crown: .right
 )
@@ -28,9 +28,9 @@ private let samples = [
 
 @Test func fileNameRoundTrips() throws {
     let name = SetCSV.fileName(for: meta, timeZone: TimeZone(identifier: "UTC")!)
-    #expect(name == "20261026-061500_bicep_curl_3reps.csv")
+    #expect(name == "20261026-061500_cable_bicep_curl_3reps.csv")
     let parsed = try #require(SetCSV.parseFileName(name))
-    #expect(parsed.exerciseID == "bicep_curl")
+    #expect(parsed.exerciseID == "cable_bicep_curl")
     #expect(parsed.trueReps == 3)
 }
 
@@ -44,4 +44,12 @@ private let samples = [
     var bodyweight = meta
     bodyweight.weightKg = nil
     #expect(SetCSV.encode(bodyweight, samples: []).contains("\n# weight_kg=\n"))
+}
+
+/// Assisted exercises store the assistance as a negative weight.
+@Test func assistanceWritesNegativeWeight() {
+    var assisted = meta
+    assisted.exercise = .assistedPullUp
+    assisted.weightKg = -47
+    #expect(SetCSV.encode(assisted, samples: []).contains("\n# weight_kg=-47\n"))
 }

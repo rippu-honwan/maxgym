@@ -2,16 +2,16 @@ import SwiftUI
 import WatchKit
 import MaxGymCore
 
-/// First screen: pick an exercise.
-struct ExerciseListView: View {
+/// First screen: pick the training day, then an exercise from that day (in gym order).
+struct DayListView: View {
     @Environment(WorkoutManager.self) private var workout
     @State private var savedCount = 0
 
     var body: some View {
         NavigationStack {
             List {
-                ForEach(Exercise.allCases) { exercise in
-                    NavigationLink(exercise.name, value: exercise)
+                ForEach(Routine.days) { day in
+                    NavigationLink(day.name, value: day)
                 }
                 if savedCount > 0 {
                     Text("\(savedCount) sets saved")
@@ -29,6 +29,12 @@ struct ExerciseListView: View {
                 }
             }
             .navigationTitle("MaxGym")
+            .navigationDestination(for: WorkoutDay.self) { day in
+                List(day.exercises) { exercise in
+                    NavigationLink(exercise.name, value: exercise)
+                }
+                .navigationTitle(day.name)
+            }
             .navigationDestination(for: Exercise.self) { exercise in
                 RecordSetView(exercise: exercise) { savedCount += 1 }
             }

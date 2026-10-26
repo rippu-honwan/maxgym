@@ -28,6 +28,6 @@ def load_set(path: str | Path) -> tuple[dict[str, str], pd.DataFrame]:
 
 
 def weight_kg(meta: dict[str, str]) -> float | None:
-    """Load in kg, or None for bodyweight (empty or missing `weight_kg`)."""
+    """Load in kg (negative = assistance), or None for bodyweight (empty or missing `weight_kg`)."""
     value = meta.get("weight_kg", "")
     return float(value) if value else None
