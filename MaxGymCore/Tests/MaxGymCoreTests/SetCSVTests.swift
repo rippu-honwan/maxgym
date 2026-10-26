@@ -3,7 +3,7 @@ import Testing
 import MaxGymCore
 
 private let meta = SetMetadata(
-    exercise: .cableBicepCurl, trueReps: 3, weightKg: 12.5, sampleRateHz: 50,
+    exercise: .cableBicepsCurl, trueReps: 3, weightKg: 12.5, sampleRateHz: 50,
     recordedAt: Date(timeIntervalSince1970: 1_792_995_300), // 2026-10-26T06:15:00Z
     wrist: .left, crown: .right
 )
@@ -28,9 +28,9 @@ private let samples = [
 
 @Test func fileNameRoundTrips() throws {
     let name = SetCSV.fileName(for: meta, timeZone: TimeZone(identifier: "UTC")!)
-    #expect(name == "20261026-061500_cable_bicep_curl_3reps.csv")
+    #expect(name == "20261026-061500_cable_biceps_curl_3reps.csv")
     let parsed = try #require(SetCSV.parseFileName(name))
-    #expect(parsed.exerciseID == "cable_bicep_curl")
+    #expect(parsed.exerciseID == "cable_biceps_curl")
     #expect(parsed.trueReps == 3)
 }
 

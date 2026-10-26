@@ -9,7 +9,7 @@ GOLDEN = Path(__file__).parent.parent / "fixtures" / "set_v1.csv"
 
 def test_loads_golden_file():
     meta, df = load_set(GOLDEN)
-    assert meta["exercise"] == "cable_bicep_curl"
+    assert meta["exercise"] == "cable_biceps_curl"
     assert int(meta["true_reps"]) == 3
     assert weight_kg(meta) == 12.5
     assert meta["wrist"] == "left" and meta["crown"] == "right"

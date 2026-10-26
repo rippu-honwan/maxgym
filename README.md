@@ -55,7 +55,7 @@ Tiers (`Exercise.tier` in `MaxGymCore`):
 | `machine_shoulder_press` | machine | core | Upper A |
 | `cable_lateral_raise` | cable | core | Upper A, Upper B |
 | `cable_overhead_triceps_extension` | cable | core | Upper A |
-| `cable_bicep_curl` | cable | core | Upper A, Upper B |
+| `cable_biceps_curl` | cable | core | Upper A, Upper B |
 | `cable_chest_fly` | cable | core | Upper B |
 | `cable_face_pull` | cable | core | Upper B |
 | `cable_triceps_pushdown` | cable | core | Upper B |
@@ -113,14 +113,14 @@ One file per set. The format is a contract between the Swift encoder
 Both are tested against [`fixtures/set_v1.csv`](fixtures/set_v1.csv). Change all of them together
 and bump `format_version`.
 
-File name: `yyyyMMdd-HHmmss_<exercise>_<n>reps.csv` (watch local time), e.g. `20261026-141500_cable_bicep_curl_10reps.csv`.
+File name: `yyyyMMdd-HHmmss_<exercise>_<n>reps.csv` (watch local time), e.g. `20261026-141500_cable_biceps_curl_10reps.csv`.
 
 Header lines (`# key=value`):
 
 | Key | Example | Meaning |
 |---|---|---|
 | `format_version` | `1` | CSV format version |
-| `exercise` | `cable_bicep_curl` | Exercise ID (`Exercise` raw value) |
+| `exercise` | `cable_biceps_curl` | Exercise ID (`Exercise` raw value) |
 | `true_reps` | `10` | Label: reps counted by the user |
 | `weight_kg` | `12.5`, `-47` or empty | Load in kg (0.5 kg steps), see note below. Negative = assistance. `0` = Smith bar only. Empty = bodyweight |
 | `sample_rate_hz` | `50` | Requested sample rate |

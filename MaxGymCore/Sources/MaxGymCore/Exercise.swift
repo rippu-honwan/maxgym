@@ -3,7 +3,7 @@
 public enum Exercise: String, CaseIterable, Identifiable, Sendable {
     // Core
     case cableLateralRaise = "cable_lateral_raise"
-    case cableBicepCurl = "cable_bicep_curl"
+    case cableBicepsCurl = "cable_biceps_curl"
     case latPulldown = "lat_pulldown"
     case latPulldownNarrow = "lat_pulldown_narrow"
     case machineChestPress = "machine_chest_press"
@@ -27,7 +27,7 @@ public enum Exercise: String, CaseIterable, Identifiable, Sendable {
     public var name: String {
         switch self {
         case .cableLateralRaise: "Cable Lateral Raise"
-        case .cableBicepCurl: "Cable Bicep Curl"
+        case .cableBicepsCurl: "Cable Biceps Curl"
         case .latPulldown: "Lat Pulldown"
         case .latPulldownNarrow: "Lat Pulldown Narrow"
         case .machineChestPress: "Chest Press"
@@ -62,7 +62,7 @@ public enum Exercise: String, CaseIterable, Identifiable, Sendable {
         case .latPulldown, .latPulldownNarrow, .machineChestPress, .machineSeatedRow,
              .machineShoulderPress, .machineTorsoRotation:
             .machine
-        case .cableLateralRaise, .cableBicepCurl, .cableOverheadTricepsExtension, .cableChestFly,
+        case .cableLateralRaise, .cableBicepsCurl, .cableOverheadTricepsExtension, .cableChestFly,
              .cableTricepsPushdown, .cableFacePull, .cableCrunch:
             .cable
         case .smithRDL, .smithSquat, .smithHipThrust:
