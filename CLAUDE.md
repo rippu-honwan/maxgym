@@ -1,46 +1,63 @@
 # Project Context
 
-- Project: MaxGym — automatic rep counting for strength training on Apple Watch (portfolio / data science project)
-- Phase 1: collect wrist sensor data + true rep counts as labelled data for training and evaluating a rep-counting algorithm
-- Platforms: watchOS 10+ (target `MaxGymWatch`), iOS 17+ (target `MaxGym`)
-- Language: Swift 5, SwiftUI; analysis in Python 3
-- Project generation: XcodeGen
+- Project: MaxGym — automatic rep counting for strength training on Apple Watch
+- Purpose: data science portfolio project. The counting algorithm and its evaluation are the core; the app is the tool that collects data and runs the model.
+- Repo: https://github.com/rippu-honwan/maxgym (branch `main`)
+- Platforms: watchOS 10+, iOS 17+; Swift 6 language mode, SwiftUI; analysis in Python 3
+- Tooling: Xcode 27, XcodeGen
   - Edit `project.yml`, then run `xcodegen`.
-  - Never edit `MaxGym.xcodeproj` directly; it is generated and gitignored.
-- Main entry:
-  - `Watch/` for the watchOS app
-    - `MotionRecorder.swift`: CMDeviceMotion at 50 Hz
-    - `WorkoutManager.swift`: HKWorkoutSession so recording continues with wrist down
-    - `SetStore.swift`: writes CSV, sends to iPhone via WatchConnectivity `transferFile`
-    - `RecordSetView.swift`, `ExerciseListView.swift`, `Exercise.swift`: UI and exercise list
-  - `iOS/` for the iPhone companion app (receive, count, share CSVs)
-  - `analysis/count_reps.py` for the baseline counter (low-pass filter → PCA → autocorrelation → find_peaks)
+  - Never edit `*.xcodeproj` directly; it is generated and gitignored.
+- Layout:
+  - `MaxGymCore/`: Swift package with pure logic (models, CSV format, later the rep counter). No UI or sensor code.
+  - `Watch/`: watchOS app (records sets). Thin: sensors, HealthKit, WatchConnectivity, UI.
+  - `iOS/`: iPhone app (receives and shares CSVs). Thin.
+  - `analysis/`: Python. Reference implementation of the counting algorithm and its evaluation.
+  - `fixtures/`: small synthetic golden files shared by Swift and Python tests.
+  - `data/`: recorded CSVs (gitignored).
+- Roadmap:
+  1. Data collection: watch records CMDeviceMotion at 50 Hz per set + true rep count (label), sends CSV to iPhone
+  2. Algorithm: Python baseline (low-pass → PCA → autocorrelation → peak detection), then an ML model. Evaluate MAE and exact-match rate per exercise. Target: MAE < 0.5 for arm exercises.
+  3. On-device: port the counter to `MaxGymCore`, count live on the watch with a haptic per rep and +/- correction buttons
+  4. Optional: sync workouts to a self-hosted openGym instance
 - Build / verify:
-  - Use the Xcode MCP to build both schemes `MaxGymWatch` and `MaxGym`.
-  - Pair schemes with matching destinations: `MaxGymWatch` → Apple Watch, `MaxGym` → iPhone.
-  - Analysis: `cd analysis && python count_reps.py --demo`
-- Data:
-  - Recorded CSVs go into `data/`; never modify recorded CSVs (they are labelled ground truth).
-  - Analysis outputs go into `analysis/results/` (gitignored).
-  - CSV format is a contract with the Python analysis; do not change it without updating `count_reps.py`:
-    - Header lines: `# key=value` for `exercise`, `exercise_name`, `true_reps`, `sample_rate_hz`, `recorded_at`
-    - Columns: `t,acc_x,acc_y,acc_z,grav_x,grav_y,grav_z,rot_x,rot_y,rot_z`
-    - File name: `yyyyMMdd-HHmmss_<exercise_id>_<n>reps.csv`
+  - Core: `swift test --package-path MaxGymCore`
+  - Python: `python -m pytest analysis`
+  - Apps: `xcodegen`, then build both schemes via the Xcode MCP. Scheme and destination must match: `MaxGymWatch` → Apple Watch, `MaxGym` → iPhone.
+
+# Current Status
+
+- `_demo/` is the throwaway prototype. It is read-only reference: do not edit it, build from it, or copy it wholesale. Delete it only when I say so.
+- Lessons from the demo:
+  - HKWorkoutSession is required so recording continues when the wrist is lowered.
+  - WatchConnectivity `transferFile` delivers CSVs; the iPhone receiver must move the file before the delegate method returns.
+  - `digitalCrownRotation` needs a BinaryFloatingPoint binding (use Double, round to Int).
 
 # Project-specific Rules
 
-- All code, identifiers, comments, commit messages and in-app UI text must be in English.
-- Use Apple frameworks only; do not add third-party packages unless asked.
-- New Swift files go in `Watch/` or `iOS/`; XcodeGen adds them to the right target automatically.
-- Make small changes, then build both schemes to confirm zero errors before moving on.
-- Keep watch UI usable mid-workout: large tap targets, minimal text, haptic feedback for state changes.
-- Keep algorithm logic in pure functions (no UI / sensor dependencies) so it can be tested and ported between Python and Swift.
-- Any change to the counting algorithm must report MAE and exact-match rate per exercise, compared with the previous version.
+Code:
+- All code, identifiers, comments, UI text and docs in English.
+- Apple frameworks only; no third-party Swift packages unless I ask.
+- Algorithm logic lives in `MaxGymCore` as pure functions with unit tests; apps only call it.
+  - Python in `analysis/` is the reference implementation. A Swift port must match Python on the files in `fixtures/` (parity test).
+- Any change to the counting algorithm reports MAE and exact-match rate per exercise vs the previous version.
+- Watch UI must be usable mid-workout: large tap targets, minimal text, haptics for state changes.
 - Signing / Team / device setup errors are not code problems: stop and tell me instead of changing build settings.
+
+Data:
+- CSV format is a contract between Swift and Python. Change it only together: Swift encoder, Python loader, `fixtures/`, `format_version`, and the spec in `README.md`.
+- Never modify recorded CSVs in `data/`; they are labelled ground truth.
+
+Git:
+- Commit messages: Conventional Commits, subject only, ≤ 50 chars, imperative, no period, no body, no trailers.
+  - Examples: `feat: add motion recorder`, `fix: crown binding type`, `docs: update readme`
+- One logical change per commit.
+- Commit only after both schemes build. Changes that touch only docs, `analysis/` or `MaxGymCore/` need their own tests to pass instead.
+- Never push, force-push or rewrite history without asking me.
+- Never commit generated files (`*.xcodeproj`, Info.plist and entitlements generated by XcodeGen, `analysis/results/`) or raw data in `data/`.
 
 # Response Style
 
 - Talk to me in concise Hong Kong Chinese (Cantonese, Traditional characters).
-- I am new to Swift: for every change, say what changed, why, and give a simple example or analogy.
-- For engineering work: be direct, concrete, and include file paths.
+- I am new to Swift: for each change, say what changed, why, and give a simple example.
 - Point out flaws in my ideas directly; do not just agree.
+- For engineering work: be direct, concrete, and include file paths.
