@@ -1,0 +1,59 @@
+# XcodeGen 設定檔：用文字描述個 Xcode project，跑 `xcodegen` 就會生成 MaxGym.xcodeproj
+# 好處：唔使喺 Xcode 度撳嚟撳去，Claude Code 都改得
+name: MaxGym
+options:
+  bundleIdPrefix: com.kenlip      # 如果 Xcode 話 bundle ID 俾人用咗，改呢度（例如 com.kenlip2026）
+  deploymentTarget:
+    iOS: "17.0"
+    watchOS: "10.0"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    CODE_SIGN_STYLE: Automatic
+    # DEVELOPMENT_TEAM: XXXXXXXXXX   # 喺 Xcode 揀 Team 之後會自動填，唔使手寫
+
+targets:
+  MaxGym:
+    type: application
+    platform: iOS
+    sources: [iOS]
+    dependencies:
+      - target: MaxGymWatch       # 將 watch app 包埋入 iPhone app
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.kenlip.MaxGym
+        TARGETED_DEVICE_FAMILY: "1"
+    info:
+      path: iOS/Info.plist
+      properties:
+        CFBundleDisplayName: MaxGym
+        UILaunchScreen: {}
+        UIFileSharingEnabled: true            # 「檔案」App 睇到 CSV
+        LSSupportsOpeningDocumentsInPlace: true
+
+  MaxGymWatch:
+    type: application
+    platform: watchOS
+    sources: [Watch]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.kenlip.MaxGym.watchkitapp
+        PRODUCT_NAME: MaxGym
+    info:
+      path: Watch/Info.plist
+      properties:
+        CFBundleDisplayName: MaxGym
+        WKApplication: true
+        WKCompanionAppBundleIdentifier: com.kenlip.MaxGym
+        WKBackgroundModes: [workout-processing]   # 落手腕都繼續錄
+        NSHealthShareUsageDescription: 讀取心率，同訓練記錄放埋一齊。
+        NSHealthUpdateUsageDescription: 將重量訓練記錄存入「健康」App。
+        NSMotionUsageDescription: 用動作感應器記錄你每一下動作，用嚟訓練自動計數。
+    entitlements:
+      path: Watch/MaxGymWatch.entitlements
+      properties:
+        com.apple.developer.healthkit: true

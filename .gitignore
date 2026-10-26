@@ -1,0 +1,5 @@
+MaxGym.xcodeproj/
+analysis/results/
+analysis/data_demo/
+__pycache__/
+.DS_Store
