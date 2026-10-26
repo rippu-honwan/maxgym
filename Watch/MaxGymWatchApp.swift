@@ -1,5 +1,4 @@
 import SwiftUI
-import MaxGymCore
 
 @main
 struct MaxGymWatchApp: App {
@@ -7,7 +6,7 @@ struct MaxGymWatchApp: App {
 
     var body: some Scene {
         WindowGroup {
-            Text("MaxGym")
+            ExerciseListView()
                 .environment(workout)
                 .task { await workout.requestAuthorization() }
         }
