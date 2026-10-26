@@ -22,6 +22,9 @@ targets:
     type: application
     platform: iOS
     sources: [iOS]
+    configFiles: # DEVELOPMENT_TEAM comes from Config/Local.xcconfig (gitignored)
+      Debug: Config/Signing.xcconfig
+      Release: Config/Signing.xcconfig
     scheme: {} # shared scheme, so Xcode and xcodebuild always see it
     dependencies:
       - target: MaxGymWatch # embeds the watch app in the iPhone app
@@ -42,6 +45,9 @@ targets:
     type: application
     platform: watchOS
     sources: [Watch]
+    configFiles: # DEVELOPMENT_TEAM comes from Config/Local.xcconfig (gitignored)
+      Debug: Config/Signing.xcconfig
+      Release: Config/Signing.xcconfig
     scheme: {}
     dependencies:
       - package: MaxGymCore

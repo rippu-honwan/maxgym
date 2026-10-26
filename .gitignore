@@ -6,6 +6,9 @@ Watch/Info.plist
 iOS/Info.plist
 Watch/*.entitlements
 
+# Personal signing settings
+Config/Local.xcconfig
+
 # Swift package
 .build/
 .swiftpm/
