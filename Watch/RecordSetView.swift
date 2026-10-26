@@ -100,7 +100,8 @@ struct RecordSetView: View {
             crown: device.crownOrientation == .left ? .left : .right
         )
         do {
-            try SetStore.save(meta, samples: samples)
+            let url = try SetStore.save(meta, samples: samples)
+            SetSender.shared.send(url)
             device.play(.success)
             onSaved()
             dismiss()

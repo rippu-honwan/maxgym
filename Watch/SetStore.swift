@@ -7,7 +7,6 @@ enum SetStore {
         URL.documentsDirectory.appending(path: "sets", directoryHint: .isDirectory)
     }
 
-    @discardableResult
     static func save(_ meta: SetMetadata, samples: [MotionSample]) throws -> URL {
         try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
         let url = folder.appending(path: SetCSV.fileName(for: meta))
